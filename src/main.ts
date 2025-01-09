@@ -2,8 +2,6 @@ import seedrandom from 'seedrandom';
 import { generateSprite } from './generateSprite';
 import './style.css';
 import { Application, Container } from 'pixi.js';
-import { generateBackground } from './generateBackground';
-import { generateRandomNumber } from './generateRandomNumber';
 
 const PRIMARY_COLOR = '#083970';
 const SECONDARY_COLOR = '#6abfb6';
@@ -25,6 +23,7 @@ globalThis.__PIXI_APP__ = app;
 document.body.appendChild(app.view);
 
 const container: Container = new Container();
+
 const randomNumber = seedrandom('hello');
 console.log(randomNumber());
 
@@ -43,4 +42,6 @@ for (let i = 0; i < GRIDSIZE; i++) {
 	}
 }
 
+container.x = app.screen.width / 2 - container.width / 2;
+container.y = app.screen.height / 2 - container.height / 2;
 app.stage.addChild(container);
