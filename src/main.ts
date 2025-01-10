@@ -1,7 +1,8 @@
 import seedrandom from 'seedrandom';
 import { generateSprite } from './generateSprite';
 import './style.css';
-import { Application, Container } from 'pixi.js';
+import { Application, Container, Sprite, Text, TextStyle } from 'pixi.js';
+import anime from 'animejs';
 
 const PRIMARY_COLOR = '#083970';
 const SECONDARY_COLOR = '#6abfb6';
@@ -22,10 +23,25 @@ globalThis.__PIXI_APP__ = app;
 
 document.body.appendChild(app.view);
 
-const container: Container = new Container();
+const backgroundContainer: Container = new Container();
+const sprites: Sprite[] = [];
 
 const randomNumber = seedrandom('hello');
 console.log(randomNumber());
+
+// function getRandomArbitrary(min: number, max: number) {
+// 	return Math.random() * (max - min) + min;
+// }
+
+// const randomArbitrary = getRandomArbitrary(0, Math.PI);
+// console.log(randomArbitrary);
+
+function getRandom(min: number, max: number) {
+	return randomNumber() * (max - min) + min;
+}
+
+// const random = getRandom(0, Math.PI);
+// console.log('random :', random);
 
 for (let i = 0; i < GRIDSIZE; i++) {
 	for (let j = 0; j < GRIDSIZE; j++) {
@@ -33,15 +49,53 @@ for (let i = 0; i < GRIDSIZE; i++) {
 		sprite.x = 0 + i * 100 + 50 * randomNumber();
 		sprite.y = 0 + j * 100 + 50 * randomNumber();
 
-		if (j % 2 === 0) {
-			sprite.rotation = Math.PI * randomNumber() + Math.PI / 2;
-		} else {
-			sprite.rotation = Math.PI * randomNumber() - Math.PI / 2;
-		}
-		container.addChild(sprite);
+		// if (j % 2 === 0) {
+		// 	sprite.rotation = Math.PI * randomNumber() + Math.PI / 2;
+		// } else {
+		// 	sprite.rotation = Math.PI * randomNumber() - Math.PI / 2;
+		// }
+
+		sprite.rotation = getRandom(0, Math.PI);
+
+		sprites.push(sprite);
+		backgroundContainer.addChild(sprite);
 	}
 }
 
-container.x = app.screen.width / 2 - container.width / 2;
-container.y = app.screen.height / 2 - container.height / 2;
-app.stage.addChild(container);
+backgroundContainer.x = app.screen.width / 2 - backgroundContainer.width / 2;
+backgroundContainer.y = app.screen.height / 2 - backgroundContainer.height / 2;
+app.stage.addChild(backgroundContainer);
+
+const timeline = anime.timeline({
+	loop: true,
+	autoplay: true,
+});
+
+timeline.add({
+	targets: sprites,
+	keyframes: [
+		{ rotation: (el: Sprite) => [el.rotation, el.rotation + Math.PI / 10] },
+		{ rotation: (el: Sprite) => [el.rotation + Math.PI / 10, el.rotation] },
+	],
+	duration: 1000,
+	delay: 500,
+	easing: 'steps(1)',
+});
+
+// const foreGroundTextStyle = new TextStyle({
+// 	fontFamily: 'Arial',
+// 	fontSize: 54,
+// 	fill: '0xffffff',
+// 	align: 'center',
+// });
+
+// const foregroundText: Text = new Text(
+// 	'Creative Developer \n at PlayPlay',
+// 	foreGroundTextStyle
+// );
+
+// foregroundText.anchor.set(0.5);
+// foregroundText.x = app.screen.width / 2;
+// foregroundText.y = app.screen.height / 2;
+
+// app.stage.addChild(foregroundText);
