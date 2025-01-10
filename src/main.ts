@@ -1,8 +1,7 @@
-import seedrandom from 'seedrandom';
-import { generateSprite } from './generateSprite';
 import './style.css';
-import { Application, Container, Sprite, Text, TextStyle } from 'pixi.js';
-import anime from 'animejs';
+import seedrandom from 'seedrandom';
+import { Application, Container, Text, TextStyle } from 'pixi.js';
+import { generateBackground } from './generateBackground';
 
 const PRIMARY_COLOR = '#083970';
 const SECONDARY_COLOR = '#6abfb6';
@@ -23,61 +22,29 @@ globalThis.__PIXI_APP__ = app;
 
 document.body.appendChild(app.view);
 
-const backgroundContainer: Container = new Container();
-const sprites: Sprite[] = [];
-
-const randomNumber = seedrandom('hello');
+const randomNumber: seedrandom.PRNG = seedrandom('hello');
 console.log(randomNumber());
 
-function getRandom(min: number, max: number) {
+export function getRandom(min: number, max: number) {
 	return randomNumber() * (max - min) + min;
 }
 
-for (let i = 0; i < GRIDSIZE; i++) {
-	for (let j = 0; j < GRIDSIZE; j++) {
-		const sprite = generateSprite(GRAPHSIZEX, GRAPHSIZEY, SECONDARY_COLOR);
-		sprite.x =
-			0 +
-			i * (app.screen.width / GRIDSIZE) +
-			(app.screen.width / GRIDSIZE / 2) * randomNumber();
-		sprite.y =
-			0 +
-			j * (app.screen.height / GRIDSIZE) +
-			(app.screen.height / GRIDSIZE / 2) * randomNumber();
+const backgroundContainer: Container | undefined = generateBackground(
+	GRIDSIZE,
+	GRAPHSIZEX,
+	GRAPHSIZEY,
+	SECONDARY_COLOR,
+	app,
+	randomNumber
+);
 
-		// if (j % 2 === 0) {
-		// 	sprite.rotation = Math.PI * randomNumber() + Math.PI / 2;
-		// } else {
-		// 	sprite.rotation = Math.PI * randomNumber() - Math.PI / 2;
-		// }
-
-		sprite.rotation = getRandom(0, Math.PI);
-
-		sprites.push(sprite);
-		backgroundContainer.addChild(sprite);
-	}
+if (backgroundContainer) {
+	backgroundContainer.x =
+		app.screen.width / 2 - backgroundContainer.width / 2;
+	backgroundContainer.y =
+		app.screen.height / 2 - backgroundContainer.height / 2;
+	app.stage.addChild(backgroundContainer);
 }
-
-backgroundContainer.x = app.screen.width / 2 - backgroundContainer.width / 2;
-backgroundContainer.y = app.screen.height / 2 - backgroundContainer.height / 2;
-app.stage.addChild(backgroundContainer);
-
-const timeline = anime.timeline({
-	loop: true,
-	autoplay: true,
-});
-
-timeline.add({
-	targets: sprites,
-	keyframes: [
-		{
-			rotation: (el: Sprite) => [el.rotation, el.rotation + Math.PI / 10],
-		},
-		{
-			rotation: (el: Sprite) => [el.rotation + Math.PI / 10, el.rotation],
-		},
-	],
-});
 
 // const foreGroundTextStyle = new TextStyle({
 // 	fontFamily: 'Arial',
