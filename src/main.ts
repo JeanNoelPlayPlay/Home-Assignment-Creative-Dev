@@ -29,25 +29,21 @@ const sprites: Sprite[] = [];
 const randomNumber = seedrandom('hello');
 console.log(randomNumber());
 
-// function getRandomArbitrary(min: number, max: number) {
-// 	return Math.random() * (max - min) + min;
-// }
-
-// const randomArbitrary = getRandomArbitrary(0, Math.PI);
-// console.log(randomArbitrary);
-
 function getRandom(min: number, max: number) {
 	return randomNumber() * (max - min) + min;
 }
 
-// const random = getRandom(0, Math.PI);
-// console.log('random :', random);
-
 for (let i = 0; i < GRIDSIZE; i++) {
 	for (let j = 0; j < GRIDSIZE; j++) {
 		const sprite = generateSprite(GRAPHSIZEX, GRAPHSIZEY, SECONDARY_COLOR);
-		sprite.x = 0 + i * 100 + 50 * randomNumber();
-		sprite.y = 0 + j * 100 + 50 * randomNumber();
+		sprite.x =
+			0 +
+			i * (app.screen.width / GRIDSIZE) +
+			(app.screen.width / GRIDSIZE / 2) * randomNumber();
+		sprite.y =
+			0 +
+			j * (app.screen.height / GRIDSIZE) +
+			(app.screen.height / GRIDSIZE / 2) * randomNumber();
 
 		// if (j % 2 === 0) {
 		// 	sprite.rotation = Math.PI * randomNumber() + Math.PI / 2;
@@ -73,13 +69,18 @@ const timeline = anime.timeline({
 
 timeline.add({
 	targets: sprites,
+	// keyframes: [{ rotation: random }, { rotation: random + Math.PI / 10 }],
 	keyframes: [
-		{ rotation: (el: Sprite) => [el.rotation, el.rotation + Math.PI / 10] },
-		{ rotation: (el: Sprite) => [el.rotation + Math.PI / 10, el.rotation] },
+		{
+			rotation: (el: Sprite) => [el.rotation, el.rotation + Math.PI / 10],
+		},
+		{
+			rotation: (el: Sprite) => [el.rotation + Math.PI / 10, el.rotation],
+		},
 	],
-	duration: 1000,
-	delay: 500,
-	easing: 'steps(1)',
+	// duration: 1000,
+	// delay: 500,
+	// easing: 'steps(1)',
 });
 
 // const foreGroundTextStyle = new TextStyle({
