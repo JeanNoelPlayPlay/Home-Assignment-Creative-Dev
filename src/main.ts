@@ -69,7 +69,6 @@ const timeline = anime.timeline({
 
 timeline.add({
 	targets: sprites,
-	// keyframes: [{ rotation: random }, { rotation: random + Math.PI / 10 }],
 	keyframes: [
 		{
 			rotation: (el: Sprite) => [el.rotation, el.rotation + Math.PI / 10],
@@ -78,9 +77,6 @@ timeline.add({
 			rotation: (el: Sprite) => [el.rotation + Math.PI / 10, el.rotation],
 		},
 	],
-	// duration: 1000,
-	// delay: 500,
-	// easing: 'steps(1)',
 });
 
 // const foreGroundTextStyle = new TextStyle({
