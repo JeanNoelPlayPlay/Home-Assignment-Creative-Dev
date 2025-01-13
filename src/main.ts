@@ -76,7 +76,6 @@ const TEXT = 'Creative Developer\nat PlayPlay';
 const textContainer = new Container();
 const bgTextContainer = new Container();
 const letters: Text[] = [];
-const bgLetters: Text[] = [];
 
 const foreGroundTextStyle = new TextStyle({
 	fontFamily: 'Arial',
@@ -92,38 +91,44 @@ const backgroundTextStyle = new TextStyle({
 });
 
 let yOffset = 0;
+const lineHeights: number[] = [];
 
 TEXT.split('\n').forEach((line) => {
 	let xOffset = 0;
+	const lineContainer = new Container();
 
 	line.split('').forEach((char) => {
 		const letter: Text = new Text(char, foreGroundTextStyle);
 		const bgLetter: Text = new Text(char, backgroundTextStyle);
 
 		letter.x = xOffset;
-		letter.y = yOffset;
-		letter.alpha = 0;
-
 		bgLetter.x = xOffset;
-		bgLetter.y = yOffset + 1;
+
+		bgLetter.y = 1;
+
+		letter.alpha = 0;
 		bgLetter.alpha = 0;
 
 		xOffset += letter.width;
 
-		textContainer.addChild(bgLetter, letter);
+		lineContainer.addChild(bgLetter, letter);
 		letters.push(bgLetter, letter);
-		// bgLetters.push(bgLetter);
 	});
-	yOffset += 100;
+
+	lineContainer.x = -(xOffset / 2);
+	lineContainer.y = yOffset;
+
+	lineHeights.push(lineContainer.height);
+
+	textContainer.addChild(lineContainer);
+
+	yOffset += lineContainer.height + 10;
 });
 
-textContainer.x = (app.renderer.width - textContainer.width) / 2;
-textContainer.y = (app.renderer.height - textContainer.height) / 2;
-bgTextContainer.x = (app.renderer.width - bgTextContainer.width) / 2;
-bgTextContainer.y = (app.renderer.height - bgTextContainer.height) / 2;
+textContainer.x = app.renderer.width / 2;
+textContainer.y = (app.renderer.height - yOffset) / 2;
 
 const shuffledLetters = shuffleText(letters);
-// const shuffledBgLetters = shuffleText(bgLetters);
 
 const timeline = anime.timeline({
 	easing: 'easeInOutSine',
@@ -136,18 +141,18 @@ timeline.add({
 	delay: (el, i) => i * 30, // Décalage progressif
 	duration: 500,
 });
-for (const letter of letters) {
-	timeline.add({
-		targets: letter,
-		y: [
-			{ value: -5, duration: 400 },
-			{ value: 5, duration: 400 },
-		],
-		direction: 'alternate',
-		loop: true,
-		easing: 'easeInOutSine',
-	});
-}
+// for (const letter of letters) {
+// 	timeline.add({
+// 		targets: letter,
+// 		y: [
+// 			{ value: -5, duration: 100 },
+// 			{ value: 5, duration: 100 },
+// 		],
+// 		direction: 'alternate',
+// 		loop: true,
+// 		easing: 'easeInOutSine',
+// 	});
+// }
 
 playBtn.eventMode = 'static';
 stopBtn.eventMode = 'static';
