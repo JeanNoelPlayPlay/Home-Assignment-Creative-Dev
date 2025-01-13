@@ -12,8 +12,6 @@ export function generateBackground(
 	app: Application<HTMLCanvasElement>,
 	randomNumber: seedrandom.PRNG
 ) {
-	console.log('random in generateBackground :', randomNumber());
-
 	const backgroundContainer = new Container();
 	const sprites: Sprite[] = [];
 	for (let i = 0; i < gridsize; i++) {
