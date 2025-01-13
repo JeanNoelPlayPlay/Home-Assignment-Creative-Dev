@@ -2,6 +2,7 @@ import './style.css';
 import seedrandom from 'seedrandom';
 import { Application, Container, Text, TextStyle } from 'pixi.js';
 import { generateBackground } from './generateBackground';
+import anime from 'animejs';
 
 const PRIMARY_COLOR = '#083970';
 const SECONDARY_COLOR = '#6abfb6';
@@ -46,20 +47,69 @@ if (backgroundContainer) {
 	app.stage.addChild(backgroundContainer);
 }
 
-// const foreGroundTextStyle = new TextStyle({
-// 	fontFamily: 'Arial',
-// 	fontSize: 54,
-// 	fill: '0xffffff',
-// 	align: 'center',
-// });
+const TEXT = 'Creative Developer';
+const textContainer = new Container();
+const bgTextContainer = new Container();
+let xOffset = 0;
+const yBgOffset = 2;
+const foregroundLetters: Text[] = [];
+const backgroundLetters: Text[] = [];
 
-// const foregroundText: Text = new Text(
-// 	'Creative Developer \n at PlayPlay',
-// 	foreGroundTextStyle
-// );
+const foreGroundTextStyle = new TextStyle({
+	fontFamily: 'Arial',
+	fontSize: 44,
+	fill: '0xffffff',
+	align: 'center',
+});
+const backgroundTextStyle = new TextStyle({
+	fontFamily: 'Arial',
+	fontSize: 44,
+	fill: SECONDARY_COLOR,
+	align: 'center',
+});
 
-// foregroundText.anchor.set(0.5);
-// foregroundText.x = app.screen.width / 2;
-// foregroundText.y = app.screen.height / 2;
+TEXT.split('').forEach((char) => {
+	console.log(char);
+	const letter: Text = new Text(char, foreGroundTextStyle);
+	const bgLetter: Text = new Text(char, backgroundTextStyle);
+	letter.x = xOffset;
+	bgLetter.x = xOffset;
+	bgLetter.y = yBgOffset;
+	letter.alpha = 0;
+	bgLetter.alpha = 0;
+	xOffset += letter.width;
+	textContainer.addChild(letter);
+	bgTextContainer.addChild(bgLetter);
+	foregroundLetters.push(letter);
+	backgroundLetters.push(bgLetter);
+});
 
-// app.stage.addChild(foregroundText);
+textContainer.x = (app.renderer.width - textContainer.width) / 2;
+textContainer.y = (app.renderer.height - textContainer.height) / 2;
+bgTextContainer.x = (app.renderer.width - bgTextContainer.width) / 2;
+bgTextContainer.y = (app.renderer.height - bgTextContainer.height) / 2;
+
+function shuffle(array: Text[]) {
+	return array.sort(() => randomNumber() - 0.5);
+}
+
+const shuffleLetters = shuffle(foregroundLetters);
+const shuffledBgLetters = shuffle(backgroundLetters);
+
+anime.timeline().add({
+	targets: shuffledBgLetters,
+	alpha: 1,
+	delay: (el, i) => i * 100,
+	easing: 'easeInOutQuad',
+	duration: 500,
+});
+anime.timeline().add({
+	targets: shuffleLetters,
+	alpha: 1,
+	delay: (el, i) => i * 100,
+	easing: 'easeInOutQuad',
+	duration: 1000,
+});
+
+app.stage.addChild(bgTextContainer);
+app.stage.addChild(textContainer);
