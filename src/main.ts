@@ -1,8 +1,8 @@
 import './style.css';
 import seedrandom from 'seedrandom';
+import anime from 'animejs';
 import { Application, Container, Text, TextStyle } from 'pixi.js';
 import { generateBackground } from './generateBackground';
-import anime from 'animejs';
 
 const PRIMARY_COLOR = '#083970';
 const SECONDARY_COLOR = '#6abfb6';
@@ -30,7 +30,11 @@ export function getRandom(min: number, max: number) {
 	return randomNumber() * (max - min) + min;
 }
 
-const backgroundContainer: Container | undefined = generateBackground(
+function shuffleText(array: Text[]) {
+	return array.sort(() => randomNumber() - 0.5);
+}
+
+const backgroundContainer: Container = generateBackground(
 	GRIDSIZE,
 	GRAPHSIZEX,
 	GRAPHSIZEY,
@@ -39,21 +43,17 @@ const backgroundContainer: Container | undefined = generateBackground(
 	randomNumber
 );
 
-if (backgroundContainer) {
-	backgroundContainer.x =
-		app.screen.width / 2 - backgroundContainer.width / 2;
-	backgroundContainer.y =
-		app.screen.height / 2 - backgroundContainer.height / 2;
-	app.stage.addChild(backgroundContainer);
-}
+backgroundContainer.x = app.screen.width / 2 - backgroundContainer.width / 2;
+backgroundContainer.y = app.screen.height / 2 - backgroundContainer.height / 2;
+app.stage.addChild(backgroundContainer);
 
 const TEXT = 'Creative Developer';
 const textContainer = new Container();
 const bgTextContainer = new Container();
 let xOffset = 0;
-const yBgOffset = 2;
-const foregroundLetters: Text[] = [];
-const backgroundLetters: Text[] = [];
+const yBgOffset = 1;
+const letters: Text[] = [];
+const bgLetters: Text[] = [];
 
 const foreGroundTextStyle = new TextStyle({
 	fontFamily: 'Arial',
@@ -69,7 +69,6 @@ const backgroundTextStyle = new TextStyle({
 });
 
 TEXT.split('').forEach((char) => {
-	console.log(char);
 	const letter: Text = new Text(char, foreGroundTextStyle);
 	const bgLetter: Text = new Text(char, backgroundTextStyle);
 	letter.x = xOffset;
@@ -78,10 +77,9 @@ TEXT.split('').forEach((char) => {
 	letter.alpha = 0;
 	bgLetter.alpha = 0;
 	xOffset += letter.width;
-	textContainer.addChild(letter);
-	bgTextContainer.addChild(bgLetter);
-	foregroundLetters.push(letter);
-	backgroundLetters.push(bgLetter);
+	textContainer.addChild(bgLetter, letter);
+	letters.push(bgLetter, letter);
+	// bgLetters.push(bgLetter);
 });
 
 textContainer.x = (app.renderer.width - textContainer.width) / 2;
@@ -89,27 +87,42 @@ textContainer.y = (app.renderer.height - textContainer.height) / 2;
 bgTextContainer.x = (app.renderer.width - bgTextContainer.width) / 2;
 bgTextContainer.y = (app.renderer.height - bgTextContainer.height) / 2;
 
-function shuffle(array: Text[]) {
-	return array.sort(() => randomNumber() - 0.5);
-}
+const shuffledLetters = shuffleText(letters);
 
-const shuffleLetters = shuffle(foregroundLetters);
-const shuffledBgLetters = shuffle(backgroundLetters);
-
-anime.timeline().add({
-	targets: shuffledBgLetters,
-	alpha: 1,
-	delay: (el, i) => i * 100,
-	easing: 'easeInOutQuad',
-	duration: 500,
-});
-anime.timeline().add({
-	targets: shuffleLetters,
-	alpha: 1,
-	delay: (el, i) => i * 100,
-	easing: 'easeInOutQuad',
-	duration: 1000,
-});
+// const shuffledBgLetters = shuffleText(bgLetters);
+console.log(shuffledLetters);
+const timeline = anime
+	.timeline({
+		easing: 'easeInOutSine',
+		duration: 4000,
+	})
+	.add({
+		targets: [shuffledLetters],
+		alpha: 1,
+		delay: (el, i) => i * 100,
+		easing: 'easeInOutQuad',
+		duration: 500,
+	});
+// for (const letter of letters) {
+// 	console.log(letter.text, letter.x, letter.y);
+// 	timeline.add(
+// 		{
+// 			targets: letter,
+// 			x: function (el, i) {
+// 				return [el.x - 5, el.x + 5];
+// 			},
+// 			y: function (el, i) {
+// 				return [el.y - 5, el.y + 5];
+// 			},
+// 			// duration: 4000,
+// 			delay: anime.stagger(10),
+// 			easing: 'easeInOutSine',
+// 			loop: true,
+// 			direction: 'alternate',
+// 		},
+// 		'-=500'
+// 	);
+// }
 
 app.stage.addChild(bgTextContainer);
 app.stage.addChild(textContainer);
