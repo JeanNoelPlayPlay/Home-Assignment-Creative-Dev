@@ -1,8 +1,8 @@
 import { Application, Container, Sprite } from 'pixi.js';
 import { generateSprite } from './generateSprite';
-import { getRandom } from './main';
 import seedrandom from 'seedrandom';
 import anime from 'animejs';
+import { getRandom } from './main';
 
 export function generateBackground(
 	gridsize: number,
