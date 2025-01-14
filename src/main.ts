@@ -2,13 +2,11 @@ import './style.css';
 import anime from 'animejs';
 import {
 	Application,
+	BitmapFont,
+	BitmapText,
 	BlurFilter,
 	Container,
-	DisplacementFilter,
-	Filter,
 	NoiseFilter,
-	Point,
-	SimpleRope,
 	Sprite,
 	Text,
 	TextStyle,
@@ -36,22 +34,6 @@ globalThis.__PIXI_APP__ = app;
 
 document.body.appendChild(app.view);
 
-const controlContainer = new Container();
-
-const playBtn = Sprite.from('play.png');
-const stopBtn = Sprite.from('stop.png');
-playBtn.scale.set(0.11);
-playBtn.anchor.set(0.5);
-playBtn.x = app.stage.width / 2 - 25;
-
-stopBtn.scale.set(0.11);
-stopBtn.anchor.set(0.5);
-stopBtn.x = app.stage.width / 2 + 25;
-
-controlContainer.addChild(playBtn, stopBtn);
-controlContainer.x = app.view.width / 2;
-controlContainer.y = app.view.height - 25;
-
 const { backgroundContainer, bgSprites } = generateBackground(
 	GRIDSIZE,
 	GRAPHSIZEX,
@@ -68,25 +50,33 @@ app.stage.addChild(backgroundContainer);
 
 const TEXT = 'Creative Developer\nat PlayPlay';
 const textContainer = new Container();
-const bgTextContainer = new Container();
-const letters: Text[] = [];
-const foregroundLetters: Text[] = [];
-const backgroundLetters: Text[] = [];
 
-const foreGroundTextStyle = new TextStyle({
+const letters: BitmapText[] = [];
+const foregroundLetters: BitmapText[] = [];
+const backgroundLetters: BitmapText[] = [];
+
+//------------------------TEXT STYLE---------------------------//
+BitmapFont.from('foregroundFont', {
 	fontFamily: 'Arial',
 	fontWeight: 'bold',
 	fontSize: 44,
 	fill: '0xffffff',
 	align: 'center',
 });
-const backgroundTextStyle = new TextStyle({
+BitmapFont.from('backgroundFont', {
 	fontFamily: 'Arial',
 	fontWeight: 'bold',
 	fontSize: 44,
 	fill: SECONDARY_COLOR,
 	align: 'center',
 });
+//-------------------------------------------------------------//
+
+//------------------------FILTERS---------------------------//
+const noise = new NoiseFilter(0.1, Math.random());
+const blur = new BlurFilter(0.1, 4);
+textContainer.filters = [noise, blur];
+//----------------------------------------------------------//
 
 let yOffset = 0;
 
@@ -95,8 +85,12 @@ TEXT.split('\n').forEach((line) => {
 	const lineContainer = new Container();
 
 	line.split('').forEach((char) => {
-		const letter: Text = new Text(char, foreGroundTextStyle);
-		const bgLetter: Text = new Text(char, backgroundTextStyle);
+		const letter: BitmapText = new BitmapText(char, {
+			fontName: 'foregroundFont',
+		});
+		const bgLetter: BitmapText = new BitmapText(char, {
+			fontName: 'backgroundFont',
+		});
 
 		letter.x = xOffset;
 		bgLetter.x = xOffset;
@@ -124,50 +118,50 @@ TEXT.split('\n').forEach((line) => {
 
 textContainer.y = (app.renderer.height - yOffset) / 2;
 
-const noise = new NoiseFilter(0.1, 1);
-const blur = new BlurFilter(0.3, 4);
-
-textContainer.filters = [noise, blur];
-
 const shuffledLetters = shuffleText(letters, randomNumber);
 
-for (let i = 0; i < foregroundLetters.length; i++) {
-	anime({
-		targets: letters,
-		duration: 2000,
-		direction: 'alternate',
-		loop: true,
-		// delay: (el, i) => i * 100,
+const timeline = anime
+	.timeline({
 		easing: 'easeInOutSine',
+		duration: 4000,
+		autoplay: false,
+	})
+	.add({
+		targets: shuffledLetters,
+		alpha: 1,
+		delay: (el, i) => i * 30,
+		duration: 500,
 	});
-}
-// for (let i = 0; i < foregroundLetters.length; i++) {
-// 	anime({
-// 		targets: [foregroundLetters[i], backgroundLetters[i]],
-// 		y: () => anime.random(-2, 2),
-// 	});
-// }
-// anime({
-// 	targets: [letters],
+console.log(foregroundLetters[0].transform);
 
-// 	y: () => anime.random(-2, 2),
-// 	delay: 500,
-// 	duration: 2000,
-// 	direction: 'alternate',
-// 	loop: true,
-// 	easing: 'easeInOutSine',
-// });
-const timeline = anime.timeline({
-	easing: 'easeInOutSine',
-	duration: 400,
-	autoplay: false,
-});
-timeline.add({
-	targets: letters,
-	alpha: 1,
-	delay: (el, i) => i * 30,
-	duration: 500,
-});
+for (let i = 0; i < foregroundLetters.length; i++) {
+	timeline.add(
+		{
+			targets: [foregroundLetters[i], backgroundLetters[i]],
+			y: [{ value: 0 }, { value: -5 }, { value: 0 }],
+			delay: (el, i) => i * 10,
+			duration: 400,
+			loop: true,
+			easing: 'easeInOutSine',
+		},
+		'-=400'
+	);
+}
+//----------------------------CONTROLS----------------------------//
+const controlContainer = new Container();
+
+const playBtn = Sprite.from('play.png');
+const stopBtn = Sprite.from('stop.png');
+playBtn.scale.set(0.11);
+playBtn.anchor.set(0.5);
+playBtn.x = app.view.width / 2 - 25;
+
+stopBtn.scale.set(0.11);
+stopBtn.anchor.set(0.5);
+stopBtn.x = app.view.width / 2 + 25;
+
+controlContainer.addChild(playBtn, stopBtn);
+controlContainer.y = app.view.height - 25;
 
 playBtn.eventMode = 'static';
 stopBtn.eventMode = 'static';
@@ -180,6 +174,6 @@ stopBtn.onclick = () => {
 	timeline.pause();
 	bgTimeline.pause();
 };
-app.stage.addChild(bgTextContainer);
+
 app.stage.addChild(textContainer);
 app.stage.addChild(controlContainer);
