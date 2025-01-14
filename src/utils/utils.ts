@@ -1,8 +1,11 @@
-import { Text } from 'pixi.js';
+import { BitmapText } from 'pixi.js';
 import seedrandom from 'seedrandom';
 
 // shuffle array of text
-export function shuffleText(array: Text[], randomNumber: seedrandom.PRNG) {
+export function shuffleText(
+	array: BitmapText[],
+	randomNumber: seedrandom.PRNG
+) {
 	return array.sort(() => randomNumber() - 0.5);
 }
 
