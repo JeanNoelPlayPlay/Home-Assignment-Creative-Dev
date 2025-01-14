@@ -2,11 +2,16 @@ import './style.css';
 import anime from 'animejs';
 import {
 	Application,
+	BlurFilter,
 	Container,
+	DisplacementFilter,
+	Filter,
+	NoiseFilter,
+	Point,
+	SimpleRope,
 	Sprite,
 	Text,
 	TextStyle,
-	Texture,
 } from 'pixi.js';
 import { generateBackground } from './background/generateBackground';
 import { randomNumber, shuffleText } from './utils/utils';
@@ -32,11 +37,9 @@ globalThis.__PIXI_APP__ = app;
 document.body.appendChild(app.view);
 
 const controlContainer = new Container();
-const playBtnTexture = Texture.from('play.png');
-const stopBtnTexture = Texture.from('stop.png');
 
-const playBtn = new Sprite(playBtnTexture);
-const stopBtn = new Sprite(stopBtnTexture);
+const playBtn = Sprite.from('play.png');
+const stopBtn = Sprite.from('stop.png');
 playBtn.scale.set(0.11);
 playBtn.anchor.set(0.5);
 playBtn.x = app.stage.width / 2 - 25;
@@ -67,22 +70,25 @@ const TEXT = 'Creative Developer\nat PlayPlay';
 const textContainer = new Container();
 const bgTextContainer = new Container();
 const letters: Text[] = [];
+const foregroundLetters: Text[] = [];
+const backgroundLetters: Text[] = [];
 
 const foreGroundTextStyle = new TextStyle({
 	fontFamily: 'Arial',
+	fontWeight: 'bold',
 	fontSize: 44,
 	fill: '0xffffff',
 	align: 'center',
 });
 const backgroundTextStyle = new TextStyle({
 	fontFamily: 'Arial',
+	fontWeight: 'bold',
 	fontSize: 44,
 	fill: SECONDARY_COLOR,
 	align: 'center',
 });
 
 let yOffset = 0;
-const lineHeights: number[] = [];
 
 TEXT.split('\n').forEach((line) => {
 	let xOffset = 0;
@@ -104,46 +110,64 @@ TEXT.split('\n').forEach((line) => {
 
 		lineContainer.addChild(bgLetter, letter);
 		letters.push(bgLetter, letter);
+		foregroundLetters.push(letter);
+		backgroundLetters.push(bgLetter);
 	});
 
-	lineContainer.x = -(xOffset / 2);
+	lineContainer.x = app.renderer.width / 2 - lineContainer.width / 2;
 	lineContainer.y = yOffset;
-
-	lineHeights.push(lineContainer.height);
 
 	textContainer.addChild(lineContainer);
 
 	yOffset += lineContainer.height + 10;
 });
 
-textContainer.x = app.renderer.width / 2;
 textContainer.y = (app.renderer.height - yOffset) / 2;
+
+const noise = new NoiseFilter(0.1, 1);
+const blur = new BlurFilter(0.3, 4);
+
+textContainer.filters = [noise, blur];
 
 const shuffledLetters = shuffleText(letters, randomNumber);
 
+for (let i = 0; i < foregroundLetters.length; i++) {
+	anime({
+		targets: letters,
+		duration: 2000,
+		direction: 'alternate',
+		loop: true,
+		// delay: (el, i) => i * 100,
+		easing: 'easeInOutSine',
+	});
+}
+// for (let i = 0; i < foregroundLetters.length; i++) {
+// 	anime({
+// 		targets: [foregroundLetters[i], backgroundLetters[i]],
+// 		y: () => anime.random(-2, 2),
+// 	});
+// }
+// anime({
+// 	targets: [letters],
+
+// 	y: () => anime.random(-2, 2),
+// 	delay: 500,
+// 	duration: 2000,
+// 	direction: 'alternate',
+// 	loop: true,
+// 	easing: 'easeInOutSine',
+// });
 const timeline = anime.timeline({
 	easing: 'easeInOutSine',
 	duration: 400,
 	autoplay: false,
 });
 timeline.add({
-	targets: shuffledLetters,
+	targets: letters,
 	alpha: 1,
 	delay: (el, i) => i * 30,
 	duration: 500,
 });
-// for (const letter of letters) {
-// 	timeline.add({
-// 		targets: letter,
-// 		y: [
-// 			{ value: -5, duration: 100 },
-// 			{ value: 5, duration: 100 },
-// 		],
-// 		direction: 'alternate',
-// 		loop: true,
-// 		easing: 'easeInOutSine',
-// 	});
-// }
 
 playBtn.eventMode = 'static';
 stopBtn.eventMode = 'static';
