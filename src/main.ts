@@ -1,5 +1,4 @@
 import './style.css';
-import seedrandom from 'seedrandom';
 import anime from 'animejs';
 import {
 	Application,
@@ -9,7 +8,9 @@ import {
 	TextStyle,
 	Texture,
 } from 'pixi.js';
-import { generateBackground } from './generateBackground';
+import { generateBackground } from './background/generateBackground';
+import { randomNumber, shuffleText } from './utils/utils';
+import { animateBackground } from './background/animateBackground';
 
 const PRIMARY_COLOR = '#083970';
 const SECONDARY_COLOR = '#6abfb6';
@@ -30,36 +31,25 @@ globalThis.__PIXI_APP__ = app;
 
 document.body.appendChild(app.view);
 
-const randomNumber: seedrandom.PRNG = seedrandom('hello');
-console.log(randomNumber());
-
 const controlContainer = new Container();
-const playBtnTexture = Texture.from('play-solid.svg');
-const stopBtnTexture = Texture.from('stop-solid.svg');
+const playBtnTexture = Texture.from('play.png');
+const stopBtnTexture = Texture.from('stop.png');
 
 const playBtn = new Sprite(playBtnTexture);
 const stopBtn = new Sprite(stopBtnTexture);
-playBtn.scale.set(0.2);
+playBtn.scale.set(0.11);
 playBtn.anchor.set(0.5);
-playBtn.x = app.stage.width / 2 - 50;
+playBtn.x = app.stage.width / 2 - 25;
 
-stopBtn.scale.set(0.2);
+stopBtn.scale.set(0.11);
 stopBtn.anchor.set(0.5);
-stopBtn.x = app.stage.width / 2 + 50;
+stopBtn.x = app.stage.width / 2 + 25;
 
 controlContainer.addChild(playBtn, stopBtn);
 controlContainer.x = app.view.width / 2;
-controlContainer.y = app.view.height - 50;
+controlContainer.y = app.view.height - 25;
 
-export function getRandom(min: number, max: number) {
-	return randomNumber() * (max - min) + min;
-}
-
-function shuffleText(array: Text[]) {
-	return array.sort(() => randomNumber() - 0.5);
-}
-
-const backgroundContainer: Container = generateBackground(
+const { backgroundContainer, bgSprites } = generateBackground(
 	GRIDSIZE,
 	GRAPHSIZEX,
 	GRAPHSIZEY,
@@ -67,6 +57,7 @@ const backgroundContainer: Container = generateBackground(
 	app,
 	randomNumber
 );
+const bgTimeline = animateBackground(bgSprites);
 
 backgroundContainer.x = app.screen.width / 2 - backgroundContainer.width / 2;
 backgroundContainer.y = app.screen.height / 2 - backgroundContainer.height / 2;
@@ -128,7 +119,7 @@ TEXT.split('\n').forEach((line) => {
 textContainer.x = app.renderer.width / 2;
 textContainer.y = (app.renderer.height - yOffset) / 2;
 
-const shuffledLetters = shuffleText(letters);
+const shuffledLetters = shuffleText(letters, randomNumber);
 
 const timeline = anime.timeline({
 	easing: 'easeInOutSine',
@@ -137,8 +128,8 @@ const timeline = anime.timeline({
 });
 timeline.add({
 	targets: shuffledLetters,
-	alpha: 1, // Faire apparaître progressivement
-	delay: (el, i) => i * 30, // Décalage progressif
+	alpha: 1,
+	delay: (el, i) => i * 30,
 	duration: 500,
 });
 // for (const letter of letters) {
@@ -157,9 +148,14 @@ timeline.add({
 playBtn.eventMode = 'static';
 stopBtn.eventMode = 'static';
 
-playBtn.onclick = timeline.play;
-stopBtn.onclick = timeline.pause;
-
+playBtn.onclick = () => {
+	timeline.play();
+	bgTimeline.play();
+};
+stopBtn.onclick = () => {
+	timeline.pause();
+	bgTimeline.pause();
+};
 app.stage.addChild(bgTextContainer);
 app.stage.addChild(textContainer);
 app.stage.addChild(controlContainer);
