@@ -6,14 +6,17 @@ import {
 	BitmapText,
 	BlurFilter,
 	Container,
+	MSAA_QUALITY,
 	NoiseFilter,
+	Point,
+	Renderer,
+	SimpleRope,
 	Sprite,
-	Text,
-	TextStyle,
 } from 'pixi.js';
 import { generateBackground } from './background/generateBackground';
 import { randomNumber, shuffleText } from './utils/utils';
 import { animateBackground } from './background/animateBackground';
+import { renderToTexture } from './renderTexture/renderTexture';
 
 const PRIMARY_COLOR = '#083970';
 const SECONDARY_COLOR = '#6abfb6';
@@ -55,7 +58,7 @@ const letters: BitmapText[] = [];
 const foregroundLetters: BitmapText[] = [];
 const backgroundLetters: BitmapText[] = [];
 
-//------------------------TEXT STYLE---------------------------//
+//------------------------BITMAPFONT STYLE---------------------------//
 BitmapFont.from('foregroundFont', {
 	fontFamily: 'Arial',
 	fontWeight: 'bold',
@@ -120,19 +123,85 @@ textContainer.y = (app.renderer.height - yOffset) / 2;
 
 const shuffledLetters = shuffleText(letters, randomNumber);
 
+const renderer = new Renderer();
+const renderTexture1 = renderToTexture(
+	renderer,
+	textContainer,
+	MSAA_QUALITY.NONE
+);
+// console.log('renderTexture1 :', renderTexture1);
+
+// const result = renderToTexture(renderer, textContainer);
+// console.log('result :', result);
+
+const renderTexture = renderToTexture(
+	new Renderer(),
+	textContainer,
+	MSAA_QUALITY.LOW
+);
+// console.log('renderTexture :', renderTexture);
+
+let count = 0;
+const ropeLength = 90;
+const points: Point[] = [];
+for (let i = 0; i < 10; i++) {
+	points.push(new Point(i * ropeLength, 0));
+}
+
+const strip = new SimpleRope(renderTexture1, points);
+const textureContainer = new Container();
+textureContainer.scale.set(0.5);
+textureContainer.addChild(strip);
+
+textureContainer.x = app.screen.width / 2 - textureContainer.width / 2;
+textureContainer.y = app.screen.height / 2 - textureContainer.height / 2;
+app.stage.addChild(textureContainer);
+
 const timeline = anime
 	.timeline({
 		easing: 'easeInOutSine',
 		duration: 4000,
 		autoplay: false,
+		update: () => {
+			// const renderTexture1 = app.renderer.generateTexture(textContainer);
+			// console.log('renderTexture1 :', renderTexture1);
+			// const renderTexture = renderToTexture(
+			// 	new Renderer(),
+			// 	textContainer,
+			// 	MSAA_QUALITY.LOW
+			// );
+			// console.log('renderTexture :', renderTexture);
+
+			count += 0.1;
+			for (let i = 0; i < points.length; i++) {
+				points[i].y = Math.sin(i * 0.5 + count) * 5;
+				points[i].x = i * ropeLength + Math.cos(i * 0.3 + count) * 5;
+			}
+			// renderer.render(textureContainer, {
+			// 	renderTexture: renderTexture,
+			// });
+			// letters.forEach((letter, index) => {
+			// 	const progress = anim.progress / 100;
+			// 	const waveY =
+			// 		Math.cos(((index + progress) * Math.PI) / index) * 0.2;
+			// 	console.log(waveY);
+			// 	letter.y += waveY;
+			// const waveX =
+			// 	Math.sin(((index + progress * 2) * Math.PI) / index) * 25;
+			// console.log(waveX);
+			// const skewX =
+			// 	Math.sin(((index + progress) * Math.PI) / index) * 0.2;
+			// letter.x = index + waveX;
+			// letter.skew.x = skewX;
+			// });
+		},
 	})
 	.add({
 		targets: shuffledLetters,
 		alpha: 1,
-		delay: (el, i) => i * 30,
-		duration: 500,
+		delay: (el, i) => i * 15,
+		duration: 1000,
 	});
-console.log(foregroundLetters[0].transform);
 
 for (let i = 0; i < foregroundLetters.length; i++) {
 	timeline.add(
