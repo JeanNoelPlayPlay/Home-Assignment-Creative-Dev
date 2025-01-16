@@ -17,6 +17,7 @@ import { generateBackground } from './background/generateBackground';
 import { randomNumber, shuffleText } from './utils/utils';
 import { animateBackground } from './background/animateBackground';
 import { renderToTexture } from './renderTexture/renderTexture';
+import { createPlayBtn, createStopBtn } from './controls/generateBtn';
 
 const PRIMARY_COLOR = '#083970';
 const SECONDARY_COLOR = '#6abfb6';
@@ -37,7 +38,7 @@ globalThis.__PIXI_APP__ = app;
 
 document.body.appendChild(app.view);
 
-const { backgroundContainer, bgSprites } = generateBackground(
+const { backgroundContainer, bgGraph } = generateBackground(
 	GRIDSIZE,
 	GRAPHSIZEX,
 	GRAPHSIZEY,
@@ -45,7 +46,7 @@ const { backgroundContainer, bgSprites } = generateBackground(
 	app,
 	randomNumber
 );
-const bgTimeline = animateBackground(bgSprites);
+const bgTimeline = animateBackground(bgGraph);
 
 backgroundContainer.x = app.screen.width / 2 - backgroundContainer.width / 2;
 backgroundContainer.y = app.screen.height / 2 - backgroundContainer.height / 2;
@@ -100,8 +101,8 @@ TEXT.split('\n').forEach((line) => {
 
 		bgLetter.y = 1;
 
-		letter.alpha = 0;
-		bgLetter.alpha = 0;
+		// letter.alpha = 0;
+		// bgLetter.alpha = 0;
 
 		xOffset += letter.width;
 
@@ -119,27 +120,17 @@ TEXT.split('\n').forEach((line) => {
 	yOffset += lineContainer.height + 10;
 });
 
-textContainer.y = (app.renderer.height - yOffset) / 2;
+// textContainer.y = (app.renderer.height - yOffset) / 2;
 
 const shuffledLetters = shuffleText(letters, randomNumber);
 
-const renderer = new Renderer();
-const renderTexture1 = renderToTexture(
-	renderer,
-	textContainer,
-	MSAA_QUALITY.NONE
-);
-// console.log('renderTexture1 :', renderTexture1);
-
-// const result = renderToTexture(renderer, textContainer);
-// console.log('result :', result);
+const renderer = app.renderer as unknown as Renderer;
 
 const renderTexture = renderToTexture(
-	new Renderer(),
+	renderer,
 	textContainer,
 	MSAA_QUALITY.LOW
 );
-// console.log('renderTexture :', renderTexture);
 
 let count = 0;
 const ropeLength = 90;
@@ -148,7 +139,7 @@ for (let i = 0; i < 10; i++) {
 	points.push(new Point(i * ropeLength, 0));
 }
 
-const strip = new SimpleRope(renderTexture1, points);
+const strip = new SimpleRope(renderTexture, points);
 const textureContainer = new Container();
 textureContainer.scale.set(0.5);
 textureContainer.addChild(strip);
@@ -157,48 +148,33 @@ textureContainer.x = app.screen.width / 2 - textureContainer.width / 2;
 textureContainer.y = app.screen.height / 2 - textureContainer.height / 2;
 app.stage.addChild(textureContainer);
 
+const sprite = Sprite.from(renderTexture);
+// app.stage.addChild(sprite);
+
 const timeline = anime
 	.timeline({
 		easing: 'easeInOutSine',
 		duration: 4000,
 		autoplay: false,
 		update: () => {
-			// const renderTexture1 = app.renderer.generateTexture(textContainer);
-			// console.log('renderTexture1 :', renderTexture1);
-			// const renderTexture = renderToTexture(
-			// 	new Renderer(),
-			// 	textContainer,
-			// 	MSAA_QUALITY.LOW
-			// );
-			// console.log('renderTexture :', renderTexture);
-
 			count += 0.1;
 			for (let i = 0; i < points.length; i++) {
 				points[i].y = Math.sin(i * 0.5 + count) * 5;
 				points[i].x = i * ropeLength + Math.cos(i * 0.3 + count) * 5;
 			}
-			// renderer.render(textureContainer, {
-			// 	renderTexture: renderTexture,
-			// });
-			// letters.forEach((letter, index) => {
-			// 	const progress = anim.progress / 100;
-			// 	const waveY =
-			// 		Math.cos(((index + progress) * Math.PI) / index) * 0.2;
-			// 	console.log(waveY);
-			// 	letter.y += waveY;
-			// const waveX =
-			// 	Math.sin(((index + progress * 2) * Math.PI) / index) * 25;
-			// console.log(waveX);
-			// const skewX =
-			// 	Math.sin(((index + progress) * Math.PI) / index) * 0.2;
-			// letter.x = index + waveX;
-			// letter.skew.x = skewX;
-			// });
+
+			const result = renderToTexture(
+				renderer,
+				textContainer,
+				MSAA_QUALITY.NONE,
+				undefined,
+				renderTexture
+			);
 		},
 	})
 	.add({
 		targets: shuffledLetters,
-		alpha: 1,
+		alpha: [0, 1],
 		delay: (el, i) => i * 15,
 		duration: 1000,
 	});
@@ -217,29 +193,26 @@ for (let i = 0; i < foregroundLetters.length; i++) {
 	);
 }
 //----------------------------CONTROLS----------------------------//
+
 const controlContainer = new Container();
 
-const playBtn = Sprite.from('play.png');
-const stopBtn = Sprite.from('stop.png');
-playBtn.scale.set(0.11);
-playBtn.anchor.set(0.5);
-playBtn.x = app.view.width / 2 - 25;
+const play = createPlayBtn();
+const stop = createStopBtn();
+play.x = 0;
+stop.x = play.width + 15;
+controlContainer.addChild(play, stop);
+controlContainer.x =
+	app.screen.width / 2 - controlContainer.width / 2 + play.width / 2;
+controlContainer.y = app.screen.height - 25;
 
-stopBtn.scale.set(0.11);
-stopBtn.anchor.set(0.5);
-stopBtn.x = app.view.width / 2 + 25;
+play.eventMode = 'static';
+stop.eventMode = 'static';
 
-controlContainer.addChild(playBtn, stopBtn);
-controlContainer.y = app.view.height - 25;
-
-playBtn.eventMode = 'static';
-stopBtn.eventMode = 'static';
-
-playBtn.onclick = () => {
+play.onclick = () => {
 	timeline.play();
 	bgTimeline.play();
 };
-stopBtn.onclick = () => {
+stop.onclick = () => {
 	timeline.pause();
 	bgTimeline.pause();
 };
