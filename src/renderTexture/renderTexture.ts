@@ -31,9 +31,9 @@ export function renderToTexture(
 			multisample,
 			...textureOptions,
 		});
-		console.log('baseRenderTexture :', baseRenderTexture);
+		// console.log('baseRenderTexture :', baseRenderTexture);
 		overrideRenderTexture = new RenderTexture(baseRenderTexture);
-		console.log('overrideRenderTexture :', overrideRenderTexture);
+		// console.log('overrideRenderTexture :', overrideRenderTexture);
 	}
 
 	const finalTexture = (overrideRenderTexture ??
@@ -46,7 +46,7 @@ export function renderToTexture(
 		initialMultiSample = finalTexture.framebuffer.multisample;
 		finalTexture.framebuffer.multisample = finalTexture.multisample;
 	}
-	console.log('finalTexture :', finalTexture);
+	// console.log('finalTexture :', finalTexture);
 
 	renderer.render(displayObject, {
 		renderTexture: finalTexture,
