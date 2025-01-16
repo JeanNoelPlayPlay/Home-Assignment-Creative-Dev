@@ -1,5 +1,5 @@
 import { Application, Container, Sprite } from 'pixi.js';
-import { generateSprite } from '../generateSprite';
+import { generateSprite } from '../utils/generateSprite';
 import seedrandom from 'seedrandom';
 import { getRandomRandom } from '../utils/utils';
 
