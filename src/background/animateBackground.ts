@@ -1,24 +1,24 @@
 import anime from 'animejs';
 
-import { Sprite } from 'pixi.js';
+import { Graphics } from 'pixi.js';
 
-export function animateBackground(sprites: Sprite[]) {
+export function animateBackground(graphics: Graphics[]) {
 	const timeline = anime.timeline({
 		loop: true,
 		autoplay: false,
 	});
 
 	timeline.add({
-		targets: sprites,
+		targets: graphics,
 		keyframes: [
 			{
-				rotation: (el: Sprite) => [
+				rotation: (el: Graphics) => [
 					el.rotation,
 					el.rotation + Math.PI / 10,
 				],
 			},
 			{
-				rotation: (el: Sprite) => [
+				rotation: (el: Graphics) => [
 					el.rotation + Math.PI / 10,
 					el.rotation,
 				],
