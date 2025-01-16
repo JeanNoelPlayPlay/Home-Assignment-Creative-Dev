@@ -1,5 +1,5 @@
-import { Application, Container, Sprite } from 'pixi.js';
-import { generateSprite } from '../utils/generateSprite';
+import { Application, Container, Graphics } from 'pixi.js';
+import { generateGraphics } from '../utils/generateGraphics';
 import seedrandom from 'seedrandom';
 import { getRandomRandom } from '../utils/utils';
 
@@ -12,25 +12,25 @@ export function generateBackground(
 	randomNumber: seedrandom.PRNG
 ) {
 	const backgroundContainer = new Container();
-	const bgSprites: Sprite[] = [];
+	const bgGraph: Graphics[] = [];
 	for (let i = 0; i < gridsize; i++) {
 		for (let j = 0; j < gridsize; j++) {
-			const sprite = generateSprite(graphSizeX, graphSizeY, color);
-			sprite.x =
+			const graph = generateGraphics(graphSizeX, graphSizeY, color);
+			graph.x =
 				0 +
 				i * (app.screen.width / gridsize) +
 				(app.screen.width / gridsize / 2) * randomNumber();
-			sprite.y =
+			graph.y =
 				0 +
 				j * (app.screen.height / gridsize) +
 				(app.screen.height / gridsize / 2) * randomNumber();
 
-			sprite.rotation = getRandomRandom(0, Math.PI);
+			graph.rotation = getRandomRandom(0, Math.PI);
 
-			bgSprites.push(sprite);
-			backgroundContainer.addChild(sprite);
+			bgGraph.push(graph);
+			backgroundContainer.addChild(graph);
 		}
 	}
 
-	return { backgroundContainer, bgSprites };
+	return { backgroundContainer, bgGraph };
 }
