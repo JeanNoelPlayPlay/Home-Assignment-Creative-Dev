@@ -1,7 +1,7 @@
 body {
 	position: relative;
 	margin: 0;
-	height: 100vh;
+	/* height: 100vh; */
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -9,8 +9,8 @@ body {
 }
 .seek-anim-demo {
 	position: absolute;
-	bottom: 350px;
-	left: 300px;
+	bottom: -50px;
+	left: 250px;
 	display: flex;
 	align-items: center;
 	gap: 0.2em;
