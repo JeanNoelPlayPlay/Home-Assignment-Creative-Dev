@@ -1,5 +1,5 @@
 import './style.css';
-import { Application, BitmapFont } from 'pixi.js';
+import { Application } from 'pixi.js';
 import { generateBackground } from './background/generateBackground';
 import { randomNumber, shuffleText } from './utils/utils';
 import { animateBackground } from './background/animateBackground';
@@ -40,23 +40,6 @@ const { backgroundContainer, bgGraph } = generateBackground(
 backgroundContainer.x = app.screen.width / 2 - backgroundContainer.width / 2;
 backgroundContainer.y = app.screen.height / 2 - backgroundContainer.height / 2;
 app.stage.addChild(backgroundContainer);
-
-//------------------------BITMAPFONT STYLE---------------------------//
-BitmapFont.from('foregroundFont', {
-	fontFamily: 'Arial',
-	fontWeight: 'bold',
-	fontSize: 44,
-	fill: '0xffffff',
-	align: 'center',
-});
-
-BitmapFont.from('backgroundFont', {
-	fontFamily: 'Arial',
-	fontWeight: 'bold',
-	fontSize: 44,
-	fill: SECONDARY_COLOR,
-	align: 'center',
-});
 
 //------------------------ TEXT ---------------------------//
 // create text
@@ -124,6 +107,11 @@ if (playBtn) {
 const stopBtn: HTMLButtonElement | null = document.querySelector('.stopBtn');
 if (stopBtn) {
 	stopBtn.onclick = timelineAnimation.pause;
+}
+const restartBtn: HTMLButtonElement | null =
+	document.querySelector('.restartBtn');
+if (restartBtn) {
+	restartBtn.onclick = timelineAnimation.restart;
 }
 
 if (controlsProgressEl) {
