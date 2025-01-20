@@ -1,13 +1,13 @@
 import './style.css';
-import { Application, BitmapFont, Container } from 'pixi.js';
+import { Application, BitmapFont } from 'pixi.js';
 import { generateBackground } from './background/generateBackground';
 import { randomNumber, shuffleText } from './utils/utils';
 import { animateBackground } from './background/animateBackground';
-import { createPlayBtn, createStopBtn } from './controls/generateBtn';
+// import { createPlayBtn, createStopBtn } from './controls/generateBtn';
 import { generateText } from './text/generateText';
 import { PRIMARY_COLOR, SECONDARY_COLOR } from './utils/colors';
 import { animateText } from './text/animateText';
-import anime, { timeline } from 'animejs';
+import anime from 'animejs';
 
 const GRAPHSIZEX = 20;
 const GRAPHSIZEY = 3;
@@ -93,17 +93,17 @@ app.stage.addChild(textContainer);
 // app.stage.addChild(controlContainer);
 //--------------------------------------------------------------//
 
-const controlsProgressEl = document.querySelector('.seek-anim-demo .progress');
+const controlsProgressEl: HTMLInputElement | null = document.querySelector(
+	'.seek-anim-demo .progress'
+);
 
 const timelineAnimation = anime.timeline({
-	direction: 'alternate',
 	autoplay: false,
-	loop: false,
-	duration: 500,
+	duration: 4000,
 	easing: 'easeInOutSine',
 	update: function () {
 		if (controlsProgressEl) {
-			controlsProgressEl.value = timelineAnimation.progress;
+			controlsProgressEl.value = timelineAnimation.progress.toString();
 		}
 	},
 });
@@ -117,17 +117,19 @@ animateText(
 	backgroundLetters,
 	timelineAnimation
 );
-const playBtn = document.querySelector('.playBtn');
+const playBtn: HTMLButtonElement | null = document.querySelector('.playBtn');
 if (playBtn) {
 	playBtn.onclick = timelineAnimation.play;
 }
-const stopBtn = document.querySelector('.stopBtn');
+const stopBtn: HTMLButtonElement | null = document.querySelector('.stopBtn');
 if (stopBtn) {
 	stopBtn.onclick = timelineAnimation.pause;
 }
 
-controlsProgressEl.addEventListener('input', function () {
-	timelineAnimation.seek(
-		timelineAnimation.duration * (controlsProgressEl.value / 100)
-	);
-});
+if (controlsProgressEl) {
+	controlsProgressEl.addEventListener('input', function () {
+		timelineAnimation.seek(
+			timelineAnimation.duration * (+controlsProgressEl.value / 100)
+		);
+	});
+}
