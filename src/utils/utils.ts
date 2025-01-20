@@ -11,7 +11,7 @@ export function shuffleText(
 
 // create randomNumber with seedrandom
 export const randomNumber: seedrandom.PRNG = seedrandom('hello');
-console.log('random number from seedrandom :', randomNumber());
+// console.log('random number from seedrandom :', randomNumber());
 
 //  get a random number within a min and max range
 export function getRandomRandom(min: number, max: number) {
