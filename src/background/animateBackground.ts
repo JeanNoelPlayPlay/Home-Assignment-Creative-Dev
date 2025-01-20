@@ -14,6 +14,7 @@ export function animateBackground(
 					el.rotation,
 					el.rotation + Math.PI / 10,
 				],
+				delay: 100,
 			},
 			{
 				rotation: (el: Graphics) => [
@@ -26,6 +27,7 @@ export function animateBackground(
 					el.rotation,
 					el.rotation + Math.PI / 10,
 				],
+				delay: 100,
 			},
 			{
 				rotation: (el: Graphics) => [
@@ -35,7 +37,7 @@ export function animateBackground(
 			},
 		],
 		easing: 'steps(1)',
-		duration: 4000,
+		duration: 3000,
 		loop: true,
 	});
 	return timeline;
