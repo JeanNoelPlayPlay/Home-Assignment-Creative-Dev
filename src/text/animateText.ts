@@ -4,20 +4,19 @@ import { BitmapText } from 'pixi.js';
 export function animateText(
 	shuffledLetters: BitmapText[],
 	foregroundLetters: BitmapText[],
-	backgroundLetters: BitmapText[]
+	backgroundLetters: BitmapText[],
+	timeline: anime.AnimeTimelineInstance
 ) {
-	const timeline = anime.timeline({
-		autoplay: false,
-		duration: 4000,
-		loop: true,
-	});
-	timeline.add({
-		targets: shuffledLetters,
-		alpha: [0, 1],
-		delay: (el, i: number) => i * 15,
-		duration: 1000,
-		easing: 'easeInOutSine',
-	});
+	timeline.add(
+		{
+			targets: shuffledLetters,
+			alpha: [0, 1],
+			delay: (el, i: number) => i * 15,
+			duration: 1000,
+			easing: 'easeInOutSine',
+		},
+		'-=2000'
+	);
 
 	for (let i = 0; i < foregroundLetters.length; i++) {
 		timeline.add(
