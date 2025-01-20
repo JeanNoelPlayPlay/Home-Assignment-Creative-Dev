@@ -2,11 +2,10 @@ import anime from 'animejs';
 
 import { Graphics } from 'pixi.js';
 
-export function animateBackground(graphics: Graphics[]) {
-	const timeline = anime.timeline({
-		loop: true,
-		autoplay: false,
-	});
+export function animateBackground(
+	graphics: Graphics[],
+	timeline: anime.AnimeTimelineInstance
+) {
 	timeline.add({
 		targets: graphics,
 		keyframes: [
@@ -15,7 +14,18 @@ export function animateBackground(graphics: Graphics[]) {
 					el.rotation,
 					el.rotation + Math.PI / 10,
 				],
-				delay: 200,
+			},
+			{
+				rotation: (el: Graphics) => [
+					el.rotation + Math.PI / 10,
+					el.rotation,
+				],
+			},
+			{
+				rotation: (el: Graphics) => [
+					el.rotation,
+					el.rotation + Math.PI / 10,
+				],
 			},
 			{
 				rotation: (el: Graphics) => [
@@ -24,6 +34,9 @@ export function animateBackground(graphics: Graphics[]) {
 				],
 			},
 		],
+		easing: 'steps(1)',
+		duration: 4000,
+		loop: true,
 	});
 	return timeline;
 }
