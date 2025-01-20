@@ -7,6 +7,7 @@ import { createPlayBtn, createStopBtn } from './controls/generateBtn';
 import { generateText } from './text/generateText';
 import { PRIMARY_COLOR, SECONDARY_COLOR } from './utils/colors';
 import { animateText } from './text/animateText';
+import anime, { timeline } from 'animejs';
 
 const GRAPHSIZEX = 20;
 const GRAPHSIZEY = 3;
@@ -66,15 +67,6 @@ const shuffledLetters = shuffleText(letters, randomNumber);
 app.stage.addChild(textContainer);
 
 //---------------------------------------------------------//
-// Animate background
-const bgTimeline = animateBackground(bgGraph);
-
-// Animate text
-const textTimeline = animateText(
-	shuffledLetters,
-	foregroundLetters,
-	backgroundLetters
-);
 
 //----------------------------CONTROLS----------------------------//
 const controlContainer = new Container();
@@ -89,14 +81,53 @@ controlContainer.x =
 	app.screen.width / 2 - controlContainer.width / 2 + play.width / 2;
 controlContainer.y = app.screen.height - 25;
 
-play.onclick = () => {
-	textTimeline.play();
-	bgTimeline.play();
-};
-stop.onclick = () => {
-	textTimeline.pause();
-	bgTimeline.pause();
-};
+// play.onclick = () => {
+// 	textTimeline.play();
+// 	bgTimeline.play();
+// };
+// stop.onclick = () => {
+// 	textTimeline.pause();
+// 	bgTimeline.pause();
+// };
 controlContainer.scale.set(0.7);
-app.stage.addChild(controlContainer);
+// app.stage.addChild(controlContainer);
 //--------------------------------------------------------------//
+
+const controlsProgressEl = document.querySelector('.seek-anim-demo .progress');
+
+const timelineAnimation = anime.timeline({
+	direction: 'alternate',
+	autoplay: false,
+	loop: false,
+	duration: 500,
+	easing: 'easeInOutSine',
+	update: function (anim) {
+		if (controlsProgressEl) {
+			controlsProgressEl.value = timelineAnimation.progress;
+		}
+	},
+});
+// Animate background
+animateBackground(bgGraph, timelineAnimation);
+
+// Animate text
+animateText(
+	shuffledLetters,
+	foregroundLetters,
+	backgroundLetters,
+	timelineAnimation
+);
+const playBtn = document.querySelector('.playBtn');
+if (playBtn) {
+	playBtn.onclick = timelineAnimation.play;
+}
+const stopBtn = document.querySelector('.stopBtn');
+if (stopBtn) {
+	stopBtn.onclick = timelineAnimation.pause;
+}
+
+controlsProgressEl.addEventListener('input', function () {
+	timelineAnimation.seek(
+		timelineAnimation.duration * (controlsProgressEl.value / 100)
+	);
+});
