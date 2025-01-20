@@ -69,17 +69,17 @@ app.stage.addChild(textContainer);
 //---------------------------------------------------------//
 
 //----------------------------CONTROLS----------------------------//
-const controlContainer = new Container();
+// const controlContainer = new Container();
 
-const play = createPlayBtn();
-const stop = createStopBtn();
+// const play = createPlayBtn();
+// const stop = createStopBtn();
 
-stop.x = play.width + 15;
+// stop.x = play.width + 15;
 
-controlContainer.addChild(play, stop);
-controlContainer.x =
-	app.screen.width / 2 - controlContainer.width / 2 + play.width / 2;
-controlContainer.y = app.screen.height - 25;
+// controlContainer.addChild(play, stop);
+// controlContainer.x =
+// 	app.screen.width / 2 - controlContainer.width / 2 + play.width / 2;
+// controlContainer.y = app.screen.height - 25;
 
 // play.onclick = () => {
 // 	textTimeline.play();
@@ -89,7 +89,7 @@ controlContainer.y = app.screen.height - 25;
 // 	textTimeline.pause();
 // 	bgTimeline.pause();
 // };
-controlContainer.scale.set(0.7);
+// controlContainer.scale.set(0.7);
 // app.stage.addChild(controlContainer);
 //--------------------------------------------------------------//
 
@@ -101,7 +101,7 @@ const timelineAnimation = anime.timeline({
 	loop: false,
 	duration: 500,
 	easing: 'easeInOutSine',
-	update: function (anim) {
+	update: function () {
 		if (controlsProgressEl) {
 			controlsProgressEl.value = timelineAnimation.progress;
 		}
