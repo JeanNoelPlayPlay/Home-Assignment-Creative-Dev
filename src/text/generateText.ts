@@ -1,5 +1,23 @@
-import { Application, BitmapText, Container } from 'pixi.js';
+import { Application, BitmapFont, BitmapText, Container } from 'pixi.js';
 import { blur, noise } from './textFilters';
+import { SECONDARY_COLOR } from '../utils/colors';
+
+//------------------------BITMAPFONT STYLE---------------------------//
+BitmapFont.from('foregroundFont', {
+	fontFamily: 'Arial',
+	fontWeight: 'bold',
+	fontSize: 44,
+	fill: '0xffffff',
+	align: 'center',
+});
+
+BitmapFont.from('backgroundFont', {
+	fontFamily: 'Arial',
+	fontWeight: 'bold',
+	fontSize: 44,
+	fill: SECONDARY_COLOR,
+	align: 'center',
+});
 
 export function generateText(
 	text: string,
@@ -9,6 +27,7 @@ export function generateText(
 	const foregroundLetters: BitmapText[] = [];
 	const backgroundLetters: BitmapText[] = [];
 	const textContainer = new Container();
+
 	let yOffset = 0;
 
 	text.split('\n').forEach((line: string) => {
