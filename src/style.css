@@ -1,8 +1,20 @@
 body {
+	position: relative;
 	margin: 0;
 	height: 100vh;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	background-color: black;
+}
+.seek-anim-demo {
+	position: absolute;
+	bottom: 350px;
+	left: 300px;
+	display: flex;
+	align-items: center;
+	gap: 0.2em;
+}
+.progress[value] {
+	height: 1px;
 }
