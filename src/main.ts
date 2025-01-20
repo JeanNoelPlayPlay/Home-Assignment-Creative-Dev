@@ -22,7 +22,7 @@ const app = new Application<HTMLCanvasElement>({
 	antialias: true,
 });
 
-globalThis.__PIXI_APP__ = app;
+// globalThis.__PIXI_APP__ = app;
 
 document.body.appendChild(app.view);
 
