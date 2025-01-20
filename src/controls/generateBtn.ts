@@ -15,7 +15,6 @@ export function createPlayBtn() {
 	playBtn.pivot.set(20, 20);
 	playBtn.eventMode = 'static';
 	playBtn.cursor = 'pointer';
-	console.log(playBtn);
 
 	return playBtn;
 }
