@@ -7,7 +7,6 @@ export function animateBackground(graphics: Graphics[]) {
 		loop: true,
 		autoplay: false,
 	});
-
 	timeline.add({
 		targets: graphics,
 		keyframes: [
@@ -16,6 +15,7 @@ export function animateBackground(graphics: Graphics[]) {
 					el.rotation,
 					el.rotation + Math.PI / 10,
 				],
+				delay: 200,
 			},
 			{
 				rotation: (el: Graphics) => [
