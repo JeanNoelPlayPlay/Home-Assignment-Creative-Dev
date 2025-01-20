@@ -10,8 +10,9 @@ import { animateText } from './text/animateText';
 
 const GRAPHSIZEX = 20;
 const GRAPHSIZEY = 3;
-
 const GRIDSIZE = 5;
+
+const TEXT = 'Creative Developer\nat PlayPlay';
 
 const app = new Application<HTMLCanvasElement>({
 	width: 500,
@@ -35,15 +36,10 @@ const { backgroundContainer, bgGraph } = generateBackground(
 	app,
 	randomNumber
 );
-
-// Animate background
-const bgTimeline = animateBackground(bgGraph);
-
 backgroundContainer.x = app.screen.width / 2 - backgroundContainer.width / 2;
 backgroundContainer.y = app.screen.height / 2 - backgroundContainer.height / 2;
 app.stage.addChild(backgroundContainer);
 
-const TEXT = 'Creative Developer\nat PlayPlay';
 //------------------------BITMAPFONT STYLE---------------------------//
 BitmapFont.from('foregroundFont', {
 	fontFamily: 'Arial',
@@ -67,14 +63,18 @@ const { textContainer, letters, foregroundLetters, backgroundLetters } =
 	generateText(TEXT, app);
 
 const shuffledLetters = shuffleText(letters, randomNumber);
+app.stage.addChild(textContainer);
 
+//---------------------------------------------------------//
+// Animate background
+const bgTimeline = animateBackground(bgGraph);
+
+// Animate text
 const textTimeline = animateText(
 	shuffledLetters,
 	foregroundLetters,
 	backgroundLetters
 );
-
-//---------------------------------------------------------//
 
 //----------------------------CONTROLS----------------------------//
 const controlContainer = new Container();
@@ -97,7 +97,6 @@ stop.onclick = () => {
 	textTimeline.pause();
 	bgTimeline.pause();
 };
-//--------------------------------------------------------------//
-
-app.stage.addChild(textContainer);
+controlContainer.scale.set(0.7);
 app.stage.addChild(controlContainer);
+//--------------------------------------------------------------//
