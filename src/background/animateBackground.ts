@@ -35,9 +35,22 @@ export function animateBackground(
 					el.rotation,
 				],
 			},
+			// {
+			// 	rotation: (el: Graphics) => [
+			// 		el.rotation,
+			// 		el.rotation + Math.PI / 10,
+			// 	],
+			// 	delay: 100,
+			// },
+			// {
+			// 	rotation: (el: Graphics) => [
+			// 		el.rotation + Math.PI / 10,
+			// 		el.rotation,
+			// 	],
+			// },
 		],
 		easing: 'steps(1)',
-		duration: 3000,
+		// duration: 3000,
 		loop: true,
 	});
 	return timeline;
