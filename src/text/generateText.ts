@@ -1,5 +1,5 @@
 import { Application, BitmapFont, BitmapText, Container } from 'pixi.js';
-import { blur, noise } from './textFilters';
+import { blur, noise } from '../utils/textFilters';
 import { SECONDARY_COLOR } from '../utils/colors';
 
 //------------------------BITMAPFONT STYLE---------------------------//
