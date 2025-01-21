@@ -15,7 +15,7 @@ export function animateText(
 			duration: 1000,
 			easing: 'easeInOutSine',
 		},
-		'-=2000'
+		'-=3000'
 	);
 
 	for (let i = 0; i < foregroundLetters.length; i++) {
