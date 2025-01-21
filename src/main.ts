@@ -25,7 +25,7 @@ const app = new Application<HTMLCanvasElement>({
 
 document.body.appendChild(app.view);
 
-//------------------------ BACKGROUND ---------------------------//
+//------------------------ BACKGROUND -----------------------//
 
 // Create background
 const { backgroundContainer, bgGraph } = generateBackground(
