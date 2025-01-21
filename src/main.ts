@@ -3,7 +3,6 @@ import { Application } from 'pixi.js';
 import { generateBackground } from './background/generateBackground';
 import { randomNumber, shuffleText } from './utils/utils';
 import { animateBackground } from './background/animateBackground';
-// import { createPlayBtn, createStopBtn } from './controls/generateBtn';
 import { generateText } from './text/generateText';
 import { PRIMARY_COLOR, SECONDARY_COLOR } from './utils/colors';
 import { animateText } from './text/animateText';
@@ -51,30 +50,7 @@ app.stage.addChild(textContainer);
 
 //---------------------------------------------------------//
 
-//----------------------------CONTROLS----------------------------//
-// const controlContainer = new Container();
-
-// const play = createPlayBtn();
-// const stop = createStopBtn();
-
-// stop.x = play.width + 15;
-
-// controlContainer.addChild(play, stop);
-// controlContainer.x =
-// 	app.screen.width / 2 - controlContainer.width / 2 + play.width / 2;
-// controlContainer.y = app.screen.height - 25;
-
-// play.onclick = () => {
-// 	textTimeline.play();
-// 	bgTimeline.play();
-// };
-// stop.onclick = () => {
-// 	textTimeline.pause();
-// 	bgTimeline.pause();
-// };
-// controlContainer.scale.set(0.7);
-// app.stage.addChild(controlContainer);
-//--------------------------------------------------------------//
+//------------------------ CONTROLS ---------------------------//
 
 const controlsProgressEl: HTMLInputElement | null = document.querySelector(
 	'.seek-anim-demo .progress'
