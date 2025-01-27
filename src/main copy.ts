@@ -12,7 +12,7 @@ import {
 	Renderer,
 	SimpleRope,
 } from 'pixi.js';
-import { generateBackground } from './background/generateBackground';
+import { generateBackground } from './background/_generateBackground';
 import { randomNumber, shuffleText } from './utils/utils';
 import { animateBackground } from './background/animateBackground';
 import { renderToTexture } from './renderTexture/renderTexture';
